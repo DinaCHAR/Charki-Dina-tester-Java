@@ -29,6 +29,7 @@ public class ParkingService {
 
     public void processIncomingVehicle() {
         try{
+        	System.out.print("Bienvenue");
             ParkingSpot parkingSpot = getNextParkingNumberIfAvailable();
             if(parkingSpot !=null && parkingSpot.getId() > 0){
                 String vehicleRegNumber = getVehichleRegNumber();
@@ -103,7 +104,13 @@ public class ParkingService {
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
             Date outTime = new Date();
             ticket.setOutTime(outTime);
-            fareCalculatorService.calculateFare(ticket);
+            //appel de la fonction getNbTicket crée une coquille vide de ticketDAO 
+            int nbTicket = ticketDAO.getNbTicket(vehicleRegNumber);
+            if (nbTicket > 1) {
+            	fareCalculatorService.calculateFare(ticket, true);
+            }else {
+            	fareCalculatorService.calculateFare(ticket, false);
+            }
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);

@@ -40,7 +40,8 @@ public class TicketDAO {
         }
     }
 
-    public Ticket getTicket(String vehicleRegNumber) {
+    @SuppressWarnings("finally")
+	public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
         Ticket ticket = null;
         try {
@@ -85,5 +86,34 @@ public class TicketDAO {
             dataBaseConfig.closeConnection(con);
         }
         return false;
+    }
+    
+    
+    @SuppressWarnings("finally")
+	public int getNbTicket (String vehicleRegNumber) {
+    	//Initialiser la connextion
+    	Connection con = null;
+    	//Initialiser le nombre de ticket à 0, car si aucun ticket n'est trouvé retourné 0 
+    	int ticketNumber = 0;
+    	try {
+    		//Récupérer la connexion dans la base de données
+    		con = dataBaseConfig.getConnection();
+    		//Préparer la requête pour récupérer le nombre de ticket
+    		PreparedStatement ps = con.prepareStatement(DBConstants.COUNT_TICKET);
+    		//Paramétrer la requête avec le numéro de la plaque
+    		//le 1 correspond à l'indice du premier paramètre dans la requête SQL
+    		ps.setString(1, vehicleRegNumber);
+    		ResultSet rs = ps.executeQuery();
+    		if (rs.next()) {
+    			ticketNumber = rs.getInt(1);
+    		}
+	    	dataBaseConfig.closeResultSet(rs);
+	        dataBaseConfig.closePreparedStatement(ps);
+    	}catch (Exception ex){
+            logger.error("Error",ex);
+        }finally {
+        	dataBaseConfig.closeConnection(con);
+        	return ticketNumber;
+        }
     }
 }
