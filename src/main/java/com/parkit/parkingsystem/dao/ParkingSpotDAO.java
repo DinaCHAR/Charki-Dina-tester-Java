@@ -25,7 +25,7 @@ public class ParkingSpotDAO {
             ps.setString(1, parkingType.toString());
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
-                result = rs.getInt(1);;
+                result = rs.getInt(1);
             }
             dataBaseConfig.closeResultSet(rs);
             dataBaseConfig.closePreparedStatement(ps);
@@ -38,7 +38,7 @@ public class ParkingSpotDAO {
     }
 
     public boolean updateParking(ParkingSpot parkingSpot){
-        //update the availability fo that parking slot
+        //update the availability for that parking slot
         Connection con = null;
         try {
             con = dataBaseConfig.getConnection();
@@ -55,5 +55,27 @@ public class ParkingSpotDAO {
             dataBaseConfig.closeConnection(con);
         }
     }
+
+	public boolean sLotParkingAvailable(long parkinNumber) {
+		//update the availability for that parking slot
+        Connection con = null;
+        try {
+            con = dataBaseConfig.getConnection();
+            PreparedStatement ps = con.prepareStatement("select available from parking where PARKING_NUMBER = ?" );
+            ps.setLong(1, parkinNumber);
+            ResultSet rs = ps.executeQuery();
+            //stocket la valeur, comparer la valeur, si plus grand que 0 j'envoie vrai ou sinon faux
+            if(rs.next()) {
+            	return rs.getInt(1) > 0;
+            }
+           return (false);
+        }catch (Exception ex){
+            logger.error("Error updating parking info",ex);
+            return false;
+        }finally {
+            dataBaseConfig.closeConnection(con);
+        }
+	}
+
 
 }
