@@ -153,6 +153,7 @@ public class FareCalculatorServiceTest {
         ticket.setInTime(inTime);
         ticket.setOutTime(outTime);
         ticket.setParkingSpot(parkingSpot);
+        //User recurent 'true'
         fareCalculatorService.calculateFare(ticket, true); 
         //Calcul du prix : un véhicule muni d’un ticket de réduction paiera bien 95% du tarif plein
         //double = stock des valeurs flottante avec ds virgule
